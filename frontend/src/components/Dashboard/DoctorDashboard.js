@@ -1,8 +1,7 @@
-// src/components/Dashboard/DoctorDashboard.js
+// components/Dashboard/DoctorDashboard.js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAppointments } from '../../actions/appointmentActions';
-import AddMedicalRecord from '../MedicalRecords/AddMedicalRecord';
+import { getAppointments, cancelAppointment } from '../../actions/appointmentActions';
 
 const DoctorDashboard = () => {
   const dispatch = useDispatch();
@@ -12,16 +11,24 @@ const DoctorDashboard = () => {
     dispatch(getAppointments());
   }, [dispatch]);
 
+  const handleCancel = (appointmentId) => {
+    dispatch(cancelAppointment(appointmentId));
+  };
+
+  const doctorAppointments = appointments.filter(
+    (appointment) => appointment.status === 'Scheduled'
+  );
+
   return (
     <div className="container">
       <h1>Doctor Dashboard</h1>
-      <AddMedicalRecord />
-      {/* Display appointments */}
       <h2>Your Appointments</h2>
       <ul>
-        {appointments.map((appointment) => (
+        {doctorAppointments.map((appointment) => (
           <li key={appointment._id}>
-            {appointment.date} with {appointment.patientId.name}
+            {new Date(appointment.date).toLocaleString()} with{' '}
+            {appointment.patientId.name}
+            <button onClick={() => handleCancel(appointment._id)}>Cancel</button>
           </li>
         ))}
       </ul>

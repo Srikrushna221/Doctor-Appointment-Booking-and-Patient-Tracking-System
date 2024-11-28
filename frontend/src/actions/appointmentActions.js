@@ -5,6 +5,7 @@ import {
   BOOK_APPOINTMENT,
   UPDATE_APPOINTMENT,
   APPOINTMENT_ERROR,
+  GET_DOCTOR_CALENDAR,
 } from './types';
 
 // Get Appointments
@@ -34,22 +35,59 @@ export const bookAppointment = (appointmentData) => async (dispatch) => {
   } catch (err) {
     dispatch({
       type: APPOINTMENT_ERROR,
+      payload: err.response.data,
     });
   }
 };
 
-// Update Appointment
-export const updateAppointment = (id, updateData) => async (dispatch) => {
+// Cancel Appointment
+export const cancelAppointment = (appointmentId) => async (dispatch) => {
   try {
-    const res = await axios.put(`/api/appointments/${id}`, updateData);
-    dispatch({
-      type: UPDATE_APPOINTMENT,
-      payload: res.data,
-    });
-    dispatch(getAppointments());
+    await axios.put(`/api/appointments/${appointmentId}/cancel`);
+    dispatch(getAppointments()); // Refresh the appointments list
   } catch (err) {
     dispatch({
       type: APPOINTMENT_ERROR,
+      payload: err.response?.data || { msg: 'An error occurred' },
     });
   }
 };
+
+// Get Available Time Slots
+export const getAvailableTimeSlots = (doctorId, date) => async (dispatch) => {
+  try {
+    const res = await axios.get('/api/appointments/available', {
+      params: { doctorId, date },
+    });
+    dispatch({
+      type: GET_AVAILABLE_TIME_SLOTS,
+      payload: res.data.timeSlots || [], // Default to an empty array if data is undefined
+    });
+  } catch (err) {
+    console.error(err); // Log the error for debugging
+    dispatch({
+      type: APPOINTMENT_ERROR,
+      payload: err.response?.data || { msg: 'An error occurred' },
+    });
+  }
+};
+
+
+export const getDoctorCalendar = (doctorId, date) => async (dispatch) => {
+  try {
+    const res = await axios.get('/api/appointments/calendar', {
+      params: { doctorId, date },
+    });
+    dispatch({
+      type: GET_DOCTOR_CALENDAR,
+      payload: res.data.timeSlots,
+    });
+  } catch (err) {
+    console.error(err);
+    dispatch({
+      type: APPOINTMENT_ERROR,
+      payload: err.response?.data || { msg: 'An error occurred' },
+    });
+  }
+};
+

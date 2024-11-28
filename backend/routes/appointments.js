@@ -4,7 +4,9 @@ const { authenticateToken } = require('../middleware/auth');
 const {
   bookAppointment,
   getAppointments,
-  updateAppointment,
+  cancelAppointment,
+  getAvailableTimeSlots,
+  getDoctorCalendar,
 } = require('../controllers/appointmentController');
 
 // @route   POST api/appointments/book
@@ -17,9 +19,17 @@ router.post('/book', authenticateToken, bookAppointment);
 // @access  Private
 router.get('/', authenticateToken, getAppointments);
 
-// @route   PUT api/appointments/:id
-// @desc    Update appointment (Cancel or Reschedule)
+// @route   PUT api/appointments/:id/cancel
+// @desc    Cancel an appointment
 // @access  Private
-router.put('/:id', authenticateToken, updateAppointment);
+router.put('/:id/cancel', authenticateToken, cancelAppointment);
+
+// @route   GET api/appointments/available
+// @desc    Get available time slots for a doctor
+// @access  Private
+router.get('/available', authenticateToken, getAvailableTimeSlots);
+
+
+router.get('/calendar', authenticateToken, getDoctorCalendar);
 
 module.exports = router;
