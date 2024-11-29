@@ -118,58 +118,60 @@ exports.getAvailableTimeSlots = async (req, res) => {
   const { doctorId, date } = req.query;
 
   try {
-    // Check if doctor exists
+    if (!doctorId || !date) {
+      return res.status(400).json({ msg: 'Doctor ID and date are required' });
+    }
+
     const doctor = await User.findById(doctorId);
     if (!doctor || doctor.role !== 'Doctor') {
       return res.status(404).json({ msg: 'Doctor not found' });
     }
 
-    // Get all appointments for the doctor on the specified date
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const appointments = await Appointment.find({
-      doctorId: doctorId,
-      status: 'Scheduled',
-      date: { $gte: startOfDay, $lte: endOfDay },
-    });
-
-    // Generate all possible time slots for the day
     const timeSlots = [];
-    const openingHour = 9; // Doctor's opening hour
-    const closingHour = 17; // Doctor's closing hour
+    const openingHour = 9; // Start at 9:00 AM
+    const closingHour = 18; // End at 6:00 PM
 
     for (let hour = openingHour; hour < closingHour; hour++) {
-      for (let minutes = 0; minutes < 60; minutes += APPOINTMENT_DURATION) {
+      for (let minutes = 0; minutes < 60; minutes += 30) {
         const slotStart = new Date(date);
         slotStart.setHours(hour, minutes, 0, 0);
-        const slotEnd = new Date(slotStart.getTime() + APPOINTMENT_DURATION * 60000);
-
-        // Check if the slot overlaps with any existing appointment
-        const isUnavailable = appointments.some((appointment) => {
-          return (
-            (appointment.date < slotEnd && appointment.date >= slotStart) ||
-            (appointment.date <= slotStart && appointment.endDate > slotStart)
-          );
-        });
+        const slotEnd = new Date(slotStart.getTime() + 30 * 60000);
 
         timeSlots.push({
           start: slotStart,
           end: slotEnd,
-          isAvailable: !isUnavailable,
+          isAvailable: true, // Default availability
         });
       }
     }
 
-    res.json({ timeSlots });
+    // Fetch existing appointments for the date
+    const appointments = await Appointment.find({
+      doctorId,
+      status: { $ne: 'Canceled' }, // Exclude canceled appointments
+      date: {
+        $gte: new Date(date).setHours(0, 0, 0, 0),
+        $lte: new Date(date).setHours(23, 59, 59, 999),
+      },
+    });
+
+    // Update time slots with availability based on appointments
+    const updatedTimeSlots = timeSlots.map((slot) => ({
+      ...slot,
+      isAvailable: !appointments.some(
+        (appointment) =>
+          appointment.date < slot.end && appointment.endDate > slot.start
+      ),
+    }));
+
+    res.json({ timeSlots: updatedTimeSlots });
   } catch (err) {
-    console.error(err.message);
+    console.error('Error fetching time slots:', err.message);
     res.status(500).send('Server Error');
   }
 };
+
+
 
 exports.getAppointments = async (req, res) => {
   try {
@@ -199,55 +201,59 @@ exports.getDoctorCalendar = async (req, res) => {
   const { doctorId, date } = req.query;
 
   try {
-    // Check if doctor exists
     const doctor = await User.findById(doctorId);
     if (!doctor || doctor.role !== 'Doctor') {
       return res.status(404).json({ msg: 'Doctor not found' });
     }
 
-    // Get all appointments for the doctor on the specified date
-    const startOfDay = new Date(date);
-    startOfDay.setHours(0, 0, 0, 0);
+    // Ensure date is valid and a weekday
+    const requestedDate = new Date(date);
+    const day = requestedDate.getDay(); // 0: Sunday, 1: Monday, ..., 6: Saturday
+    if (day === 0 || day === 6) {
+      return res.status(400).json({ msg: 'Appointments can only be booked on weekdays (Monday to Friday)' });
+    }
 
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
-
-    const appointments = await Appointment.find({
-      doctorId,
-      status: 'Scheduled',
-      date: { $gte: startOfDay, $lte: endOfDay },
-    });
-
-    // Generate all possible time slots for the day
+    // Generate time slots for the day
     const timeSlots = [];
-    const openingHour = 9; // Doctor's opening hour
-    const closingHour = 17; // Doctor's closing hour
+    const openingHour = 9; // 9:00 AM
+    const closingHour = 18; // 6:00 PM
 
     for (let hour = openingHour; hour < closingHour; hour++) {
-      for (let minutes = 0; minutes < 60; minutes += APPOINTMENT_DURATION) {
+      for (let minutes = 0; minutes < 60; minutes += 30) {
         const slotStart = new Date(date);
         slotStart.setHours(hour, minutes, 0, 0);
-        const slotEnd = new Date(slotStart.getTime() + APPOINTMENT_DURATION * 60000);
-
-        // Check if the slot overlaps with any existing appointment
-        const isBooked = appointments.some((appointment) => {
-          return (
-            (appointment.date < slotEnd && appointment.date >= slotStart) ||
-            (appointment.date <= slotStart && appointment.endDate > slotStart)
-          );
-        });
+        const slotEnd = new Date(slotStart.getTime() + 30 * 60000);
 
         timeSlots.push({
           start: slotStart,
           end: slotEnd,
-          isBooked,
         });
       }
     }
 
-    res.json({ timeSlots });
+    // Fetch existing appointments for the doctor on the date
+    const appointments = await Appointment.find({
+      doctorId,
+      status: 'Scheduled',
+      date: { $gte: new Date(date).setHours(0, 0, 0, 0), $lte: new Date(date).setHours(23, 59, 59, 999) },
+    });
+
+    // Mark slots as booked or available
+    const slotsWithAvailability = timeSlots.map((slot) => ({
+      start: slot.start,
+      end: slot.end,
+      isBooked: appointments.some((appointment) => {
+        return (
+          (appointment.date < slot.end && appointment.date >= slot.start) ||
+          (appointment.date <= slot.start && appointment.endDate > slot.start)
+        );
+      }),
+    }));
+
+    res.json({ timeSlots: slotsWithAvailability });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
 };
+

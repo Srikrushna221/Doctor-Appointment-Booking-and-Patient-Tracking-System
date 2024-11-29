@@ -31,6 +31,7 @@ const BookAppointment = ({ doctors }) => {
     }
     const currentDate = new Date();
     const appointmentDateTime = new Date(`${date}T${time}`);
+    console.log(appointmentDateTime)
     if (appointmentDateTime <= currentDate) {
       alert('You cannot book an appointment in the past. Please select a future time.');
       return;

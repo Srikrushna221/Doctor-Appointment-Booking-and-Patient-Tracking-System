@@ -2,13 +2,13 @@
 import {
     GET_APPOINTMENTS,
     BOOK_APPOINTMENT,
-    UPDATE_APPOINTMENT,
     APPOINTMENT_ERROR,
     GET_AVAILABLE_TIME_SLOTS,
     GET_DOCTOR_CALENDAR,
   } from '../actions/types';
   
   const initialState = {
+    timeSlots: [],
     appointments: [],
     availableTimeSlots: [],
     loading: true,
@@ -26,23 +26,24 @@ import {
           loading: false,
         };
       case BOOK_APPOINTMENT:
-      case UPDATE_APPOINTMENT:
         return {
           ...state,
+          error: null, // Clear error on successful booking
           loading: false,
         };
       case GET_AVAILABLE_TIME_SLOTS:
           return {
             ...state,
-            availableTimeSlots: payload || [], // Default to an empty array
+            timeSlots: payload || [], // Default to an empty array
             loading: false,
           };
       case GET_DOCTOR_CALENDAR:
           return {
             ...state,
-            timeSlots: payload || [],
+            timeSlots: payload || [], // Ensure an empty array if no data
             loading: false,
           };
+
       case APPOINTMENT_ERROR:
           return {
             ...state,

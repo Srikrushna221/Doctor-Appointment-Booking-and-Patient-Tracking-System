@@ -6,6 +6,7 @@ import {
   UPDATE_APPOINTMENT,
   APPOINTMENT_ERROR,
   GET_DOCTOR_CALENDAR,
+  GET_AVAILABLE_TIME_SLOTS
 } from './types';
 
 // Get Appointments
@@ -59,18 +60,20 @@ export const getAvailableTimeSlots = (doctorId, date) => async (dispatch) => {
     const res = await axios.get('/api/appointments/available', {
       params: { doctorId, date },
     });
+    console.log('API Response:', res.data); // Log the API response
     dispatch({
       type: GET_AVAILABLE_TIME_SLOTS,
-      payload: res.data.timeSlots || [], // Default to an empty array if data is undefined
+      payload: res.data.timeSlots || [],
     });
   } catch (err) {
-    console.error(err); // Log the error for debugging
+    console.error('API Error:', err.response?.data || err.message); // Log the error
     dispatch({
       type: APPOINTMENT_ERROR,
       payload: err.response?.data || { msg: 'An error occurred' },
     });
   }
 };
+
 
 
 export const getDoctorCalendar = (doctorId, date) => async (dispatch) => {
@@ -83,11 +86,12 @@ export const getDoctorCalendar = (doctorId, date) => async (dispatch) => {
       payload: res.data.timeSlots,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error fetching doctor calendar:', err.response?.data || err.message);
     dispatch({
       type: APPOINTMENT_ERROR,
-      payload: err.response?.data || { msg: 'An error occurred' },
+      payload: err.response?.data || { msg: 'Failed to fetch calendar data' },
     });
   }
 };
+
 
