@@ -1,23 +1,26 @@
-// src/components/Dashboard/PatientDashboard.js
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAppointments, getAvailableTimeSlots, bookAppointment } from '../../actions/appointmentActions';
 import { getDoctors } from '../../actions/doctorActions';
+import { fetchMedicalRecords } from '../../actions/medicalRecordActions';
 import ViewAppointments from '../Appointments/ViewAppointments';
 
 const PatientDashboard = () => {
   const dispatch = useDispatch();
   const { appointments, timeSlots, error } = useSelector((state) => state.appointments);
-  const { doctors } = useSelector((state) => state.doctors);
+  const { doctors, loading: doctorsLoading, error: doctorsError } = useSelector((state) => state.doctors);
+  const { records } = useSelector((state) => state.medicalRecords);
 
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [showDoctorsInfo, setShowDoctorsInfo] = useState(false); // Toggle visibility of Doctors Information
 
-  // Fetch doctors and appointments on mount
+  // Fetch doctors, appointments, and medical records on mount
   useEffect(() => {
     dispatch(getAppointments());
     dispatch(getDoctors());
+    dispatch(fetchMedicalRecords());
   }, [dispatch]);
 
   // Fetch time slots when doctor and date are selected
@@ -55,10 +58,40 @@ const PatientDashboard = () => {
       })
     );
   };
-
+  
   return (
     <div className="container">
       <h1>Patient Dashboard</h1>
+
+      {/* Doctors Information Toggle */}
+      <div>
+        <button
+          onClick={() => setShowDoctorsInfo((prevState) => !prevState)}
+          style={{ marginBottom: '10px' }}
+        >
+          {showDoctorsInfo ? 'Hide Doctors Information' : 'Show Doctors Information'}
+        </button>
+
+        {showDoctorsInfo && (
+          <div>
+            <h3>Doctors Information</h3>
+            {doctorsLoading && <p>Loading doctors...</p>}
+            {doctorsError && <p style={{ color: 'red' }}>{doctorsError.msg}</p>}
+            {doctors.length > 0 ? (
+              doctors.map((doctor) => (
+                <div key={doctor._id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+                  <h2>{doctor.name}</h2>
+                  <p><strong>Specialization:</strong> {doctor.specialization}</p>
+                  <p><strong>Description:</strong> {doctor.description || 'No description available'}</p>
+                </div>
+              ))
+            ) : (
+              <p>No doctors available at the moment.</p>
+            )}
+          </div>
+        )}
+      </div>
+
 
       {/* Doctor Selection */}
       <div>
@@ -134,6 +167,24 @@ const PatientDashboard = () => {
 
       {/* View Appointments */}
       <ViewAppointments appointments={appointments} />
+
+      {/* View Medical Records */}
+      <div>
+        <h3>Your Medical Records</h3>
+        {records.length > 0 ? (
+          <ul>
+            {records.map((record) => (
+              <li key={record._id}>
+                <p>{record.record}</p>
+                <small>Added by Dr. {record.doctorId.name}</small>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No medical records available.</p>
+        )}
+      </div>
+
     </div>
   );
 };

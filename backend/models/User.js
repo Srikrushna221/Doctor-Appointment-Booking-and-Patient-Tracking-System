@@ -18,6 +18,10 @@ const UserSchema = new mongoose.Schema({
     },
   ],
   createdAt: { type: Date, default: Date.now },
+  description: {
+    type: String,
+    default: '', // New field for doctor's description
+  }
 });
 
 module.exports = mongoose.model('User', UserSchema);

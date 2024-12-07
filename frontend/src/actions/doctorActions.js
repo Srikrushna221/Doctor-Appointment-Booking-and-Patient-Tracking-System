@@ -52,3 +52,19 @@ export const rateDoctor = (id, rating) => async (dispatch) => {
     });
   }
 };
+
+// Fetch all doctors
+export const fetchDoctors = () => async (dispatch) => {
+  try {
+    const res = await api.get('/api/doctors');
+    dispatch({
+      type: GET_DOCTORS,
+      payload: res.data,
+    });
+  } catch (err) {
+    dispatch({
+      type: DOCTOR_ERROR,
+      payload: err.response?.data || { msg: 'Error fetching doctors' },
+    });
+  }
+};

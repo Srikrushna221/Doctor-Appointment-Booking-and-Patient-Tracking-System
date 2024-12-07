@@ -1,7 +1,6 @@
 const cron = require('node-cron');
 const Appointment = require('../models/Appointment');
 const User = require('../models/User');
-const { sendAppointmentReminder } = require('../utils/emailService');
 
 // Schedule tasks to be run on the server
 cron.schedule('0 9 * * *', async () => {

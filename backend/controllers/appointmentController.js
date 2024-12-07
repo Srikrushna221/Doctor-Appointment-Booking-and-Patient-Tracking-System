@@ -21,7 +21,7 @@ exports.bookAppointment = async (req, res) => {
     const currentDate = new Date();
 
     // Validate that the requested date is in the future
-    if (requestedDate <= currentDate) {
+    if (requestedDate < currentDate) {
       return res.status(400).json({ msg: 'Cannot book an appointment in the past' });
     }
 
@@ -81,7 +81,6 @@ exports.bookAppointment = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
-
 
 exports.cancelAppointment = async (req, res) => {
   const appointmentId = req.params.id;

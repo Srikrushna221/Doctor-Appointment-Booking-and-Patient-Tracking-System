@@ -5,6 +5,7 @@ const {
   getAllDoctors,
   getDoctorProfile,
   rateDoctor,
+  addOrUpdateDoctorDescription, // New controller for updating the doctor's description
 } = require('../controllers/doctorController');
 
 // @route   GET api/doctors
@@ -21,5 +22,10 @@ router.get('/:id', getDoctorProfile);
 // @desc    Rate a doctor
 // @access  Private (Patient)
 router.post('/:id/rate', authenticateToken, rateDoctor);
+
+// @route   PUT api/doctors/:id/description
+// @desc    Add or update doctor's description
+// @access  Private (Doctor)
+router.put('/:id/description', authenticateToken, addOrUpdateDoctorDescription);
 
 module.exports = router;

@@ -23,7 +23,7 @@ import {
           doctors: payload,
           loading: false,
         };
-      case GET_DOCTOR:
+      case GET_DOCTOR   :
       case RATE_DOCTOR:
         return {
           ...state,

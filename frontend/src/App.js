@@ -12,6 +12,8 @@ import DoctorDashboard from './components/Dashboard/DoctorDashboard';
 import PrivateRoute from './components/Common/PrivateRoute';
 import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
+import DoctorsPage from './components/DoctorsPage';
+
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -31,6 +33,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route exact path="/doctors" component={DoctorsPage} />
 
         {/* Protected Routes */}
         <Route

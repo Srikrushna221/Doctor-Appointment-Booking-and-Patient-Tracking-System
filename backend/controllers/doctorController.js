@@ -57,3 +57,28 @@ exports.rateDoctor = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+
+exports.addOrUpdateDoctorDescription = async (req, res) => {
+  const doctorId = req.params.id;
+  const { description } = req.body;
+
+  try {
+    if (req.user.role !== 'Doctor' || req.user.id !== doctorId) {
+      return res.status(403).json({ msg: 'Access denied' });
+    }
+
+    const doctor = await User.findById(doctorId);
+    if (!doctor || doctor.role !== 'Doctor') {
+      return res.status(404).json({ msg: 'Doctor not found' });
+    }
+
+    doctor.description = description || '';
+    await doctor.save();
+
+    res.json({ msg: 'Description updated successfully', doctor });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};

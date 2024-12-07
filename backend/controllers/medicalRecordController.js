@@ -58,3 +58,47 @@ exports.getMedicalHistory = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
+
+
+// Save or Update a Medical Record
+exports.saveMedicalRecord = async (req, res) => {
+  const { patientId, doctorId, record } = req.body;
+
+  try {
+    if (!patientId || !doctorId || !record) {
+      return res.status(400).json({ msg: 'All fields are required' });
+    }
+
+    let medicalRecord = await MedicalRecord.findOne({ patientId, doctorId });
+
+    if (medicalRecord) {
+      // Update existing record
+      medicalRecord.record = record;
+    } else {
+      // Create new record
+      medicalRecord = new MedicalRecord({ patientId, doctorId, record });
+    }
+
+    await medicalRecord.save();
+
+    res.json({ msg: 'Record saved successfully', medicalRecord });
+  } catch (err) {
+    console.error('Error saving medical record:', err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
+// Fetch Medical Records for a Patient
+exports.getMedicalRecords = async (req, res) => {
+  const { patientId } = req.params;
+
+  try {
+    const records = await MedicalRecord.find({ patientId }).populate('doctorId', 'name');
+    res.json({ records });
+  } catch (err) {
+    console.error('Error fetching medical records:', err.message);
+    res.status(500).json({ msg: 'Server error' });
+  }
+};
+
