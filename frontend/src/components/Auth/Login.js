@@ -91,9 +91,6 @@ const Login = () => {
           <Link to="/register" className="provider-sign-in">
             New? Sign In Here
           </Link>
-          <a href="/forgot-password" className="forgot-password">
-            Forgot your password?
-          </a>
         </div>
       </div>
     </div>
