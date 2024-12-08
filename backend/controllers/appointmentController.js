@@ -147,7 +147,7 @@ exports.getAvailableTimeSlots = async (req, res) => {
     // Fetch existing appointments for the date
     const appointments = await Appointment.find({
       doctorId,
-      status: { $ne: 'Canceled' }, // Exclude canceled appointments
+      status: { $ne: 'Cancelled' }, // Exclude canceled appointments
       date: {
         $gte: new Date(date).setHours(0, 0, 0, 0),
         $lte: new Date(date).setHours(23, 59, 59, 999),
@@ -177,17 +177,29 @@ exports.getAppointments = async (req, res) => {
     const userId = req.user.id;
     const userRole = req.user.role;
 
-    let appointments;
-
+    let query;
     if (userRole === 'Doctor') {
       // Fetch appointments for the doctor
-      appointments = await Appointment.find({ doctorId: userId, status: 'Scheduled' }).populate('patientId', 'name email');
+      query = { doctorId: userId, status: 'Scheduled' };
     } else if (userRole === 'Patient') {
       // Fetch appointments for the patient
-      appointments = await Appointment.find({ patientId: userId, status: 'Scheduled' }).populate('doctorId', 'name specialization');
+      query = { patientId: userId, status: 'Scheduled' };
     } else {
       return res.status(403).json({ msg: 'Unauthorized access' });
     }
+
+    // Update appointments where current time is past the endDate
+    const now = new Date();
+    await Appointment.updateMany(
+      { ...query, endDate: { $lt: now } }, // Matches appointments with endDate in the past
+      { $set: { status: 'Completed' } }
+    );
+
+    // Fetch updated appointments
+    const appointments = await Appointment.find(query).populate(
+      userRole === 'Doctor' ? 'patientId' : 'doctorId',
+      'name email specialization'
+    );
 
     res.json(appointments);
   } catch (err) {
@@ -195,6 +207,7 @@ exports.getAppointments = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
 
 exports.getDoctorCalendar = async (req, res) => {
   const { doctorId, date } = req.query;
@@ -255,4 +268,3 @@ exports.getDoctorCalendar = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
-

@@ -9,6 +9,9 @@ export const LOAD_USER = 'LOAD_USER';
 export const AUTH_ERROR = 'AUTH_ERROR';
 export const LOGOUT = 'LOGOUT';
 
+export const SET_SUCCESS_MESSAGE = 'SET_SUCCESS_MESSAGE';
+export const SET_ERROR_MESSAGE = 'SET_ERROR_MESSAGE';
+
 // Appointments
 export const GET_APPOINTMENTS = 'GET_APPOINTMENTS';
 export const BOOK_APPOINTMENT = 'BOOK_APPOINTMENT';

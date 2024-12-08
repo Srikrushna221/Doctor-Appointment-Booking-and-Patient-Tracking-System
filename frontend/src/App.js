@@ -14,6 +14,7 @@ import Header from './components/Layout/Header';
 import Footer from './components/Layout/Footer';
 import DoctorsPage from './components/DoctorsPage';
 
+import "./App.css";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -28,7 +29,6 @@ function App() {
 
   return (
     <Router>
-      <Header />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Login />} />

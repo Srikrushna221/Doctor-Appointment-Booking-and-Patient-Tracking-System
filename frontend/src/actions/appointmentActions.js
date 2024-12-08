@@ -93,5 +93,3 @@ export const getDoctorCalendar = (doctorId, date) => async (dispatch) => {
     });
   }
 };
-
-

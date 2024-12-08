@@ -38,7 +38,7 @@
 // };
 
 
-import axios from 'axios';
+import api from "../utils/api";
 import { SAVE_RECORD, FETCH_RECORDS, RECORD_ERROR } from './types';
 
 
@@ -53,7 +53,7 @@ export const saveMedicalRecord = (data) => async (dispatch, getState) => {
       throw new Error('Required fields are missing');
     }
 
-    const res = await axios.post('/api/medicalRecords', {
+    const res = await api.post('/api/medicalRecords', {
       ...data,
       doctorId,
     });
@@ -77,10 +77,12 @@ export const fetchMedicalRecords = () => async (dispatch, getState) => {
     const patientId = auth.user._id; // Extract the patient's ID
 
     if (!patientId) {
+      console.log("Hello");
       throw new Error('Patient ID is undefined');
     }
 
-    const res = await axios.get(`/api/medicalRecords/${patientId}`);
+    const res = await api.get(`/api/medicalRecords/${patientId}`);
+
     dispatch({
       type: FETCH_RECORDS,
       payload: res.data.records,
@@ -92,4 +94,3 @@ export const fetchMedicalRecords = () => async (dispatch, getState) => {
     });
   }
 };
-

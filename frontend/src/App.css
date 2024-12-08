@@ -1,6 +1,18 @@
-.App {
-  text-align: center;
+
+/* src/App.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: auto; /* Let the content determine the height */
+  overflow: auto; /* Ensure scrolling works */
 }
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the content takes full height, but can scroll */
+}
+
 
 .App-logo {
   height: 40vmin;

@@ -1,0 +1,79 @@
+/* src/components/Layout/Header.css */
+
+/* Header container and title */
+.header-container {
+  background-color: #4CAF50; /* Primary color */
+  padding: 20px 20px;
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: white;
+  border-radius: 15px; /* Rounded corners for the header */
+  margin-top: 20px; /* Gap from the top of the screen */
+  max-width: 100%; /* Ensure it doesn't exceed screen width */
+  width: 93%; /* Full width */
+}
+
+.header-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+  color: white;
+  text-align: center;
+}
+
+/* Navigation links and buttons styling */
+.header-nav {
+  display: flex; /* Horizontal layout for links */
+  gap: 15px;
+  margin-top: 10px;
+  justify-content: center; /* Center links */
+  align-items: center;
+}
+
+/* Styling for links to look like buttons */
+.nav-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  padding: 10px 20px;
+  background-color: #007bff; /* Primary button color */
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  color: #f1f1f1; /* Change text color on hover */
+}
+
+/* Styling for logout button */
+.logout-link {
+  color: #ff5722; /* Highlight for logout */
+}
+
+.logout-link:hover {
+  color: #ffab91;
+}
+
+.auth-links,
+.guest-links {
+  display: flex;
+  gap: 20px;
+  /* Align buttons beside each other with space */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header-nav {
+    margin-top: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

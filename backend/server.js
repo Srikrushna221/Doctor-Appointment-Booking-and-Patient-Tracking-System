@@ -23,8 +23,5 @@ app.use('/api/medicalRecords', medicalRecordsRoute);
 app.use('/api/doctors', require('./routes/doctors'));
 
 // Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = 4040;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-// Cron Jobs
-require('./cron/reminderCron.js');

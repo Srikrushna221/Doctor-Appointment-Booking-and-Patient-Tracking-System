@@ -4,7 +4,7 @@ const User = require('../models/User');
 
 // Register User
 exports.registerUser = async (req, res) => {
-  const { role, name, email, password, specialization } = req.body;
+  const { role, name, email, password, specialization, description } = req.body;
 
   try {
     let user = await User.findOne({ email });
@@ -17,6 +17,7 @@ exports.registerUser = async (req, res) => {
       email,
       password,
       specialization,
+      description,
     });
 
     // Hash password
