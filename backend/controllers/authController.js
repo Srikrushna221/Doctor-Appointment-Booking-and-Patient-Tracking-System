@@ -7,10 +7,22 @@ exports.registerUser = async (req, res) => {
   const { role, name, email, password, specialization, description } = req.body;
 
   try {
+    // Check if a user with the same email already exists
     let user = await User.findOne({ email });
+    if (user){
+       return res
+          .status(400)
+          .json({ msg: `A ${role} with the mail "${email}" already exists. Please use a different mail.` });
+    }
+    // Check if a user with the same name and role already exists
+    const existingUserWithName = await User.findOne({ name, role });
+    if (existingUserWithName) {
+      return res
+        .status(400)
+        .json({ msg: `A ${role} with the name "${name}" already exists. Please use a different name.` });
+    }
 
-    if (user) return res.status(400).json({ msg: 'User already exists' });
-
+    // Create a new user instance
     user = new User({
       role,
       name,
