@@ -4,7 +4,8 @@ const { authenticateToken } = require('../middleware/auth');
 const {
   getAllDoctors,
   getDoctorProfile,
-  rateDoctor,
+  addDoctorRating, 
+  getDoctorRating, 
   addOrUpdateDoctorDescription, // New controller for updating the doctor's description
 } = require('../controllers/doctorController');
 
@@ -18,14 +19,15 @@ router.get('/', getAllDoctors);
 // @access  Public
 router.get('/:id', getDoctorProfile);
 
-// @route   POST api/doctors/:id/rate
-// @desc    Rate a doctor
-// @access  Private (Patient)
-router.post('/:id/rate', authenticateToken, rateDoctor);
-
 // @route   PUT api/doctors/:id/description
 // @desc    Add or update doctor's description
 // @access  Private (Doctor)
 router.put('/:id/description', authenticateToken, addOrUpdateDoctorDescription);
+
+// Add a rating for a doctor
+router.post('/:id/rate', authenticateToken, addDoctorRating);
+
+// Get the average rating for a doctor
+router.get('/:id/rating', getDoctorRating);
 
 module.exports = router;

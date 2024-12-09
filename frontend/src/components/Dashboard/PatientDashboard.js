@@ -24,12 +24,17 @@ const PatientDashboard = () => {
   // State for logged-in patient's data
   const [showPatientInfoModal, setShowPatientInfoModal] = useState(false);
 
+  // Rating-related states
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [selectedDoctorForRating, setSelectedDoctorForRating] = useState(null);
+  const [userRating, setUserRating] = useState(0);
+  const [doctorRatings, setDoctorRatings] = useState({}); // Store average rating and total reviews for each doctor
+
   useEffect(() => {
     dispatch(getAppointments());
     dispatch(getDoctors());
     dispatch(fetchMedicalRecords());
     dispatch(loadUser());
-
   }, [dispatch]);
 
   useEffect(() => {
@@ -40,6 +45,26 @@ const PatientDashboard = () => {
       dispatch(getAvailableTimeSlots(selectedDoctor, appointmentDate));
     }
   }, [selectedDoctor, selectedDate, dispatch]);
+
+  useEffect(() => {
+    // Fetch ratings for all doctors
+    const fetchRatings = async () => {
+      try {
+        const ratings = {};
+        for (const doctor of doctors) {
+          const response = await axios.get(`/api/doctors/${doctor._id}/rating`);
+          ratings[doctor._id] = response.data;
+        }
+        setDoctorRatings(ratings);
+      } catch (err) {
+        console.error('Error fetching doctor ratings:', err);
+      }
+    };
+
+    if (doctors.length > 0) {
+      fetchRatings();
+    }
+  }, [doctors]);
 
   const handleDoctorChange = (e) => {
     setSelectedDoctor(e.target.value);
@@ -74,6 +99,118 @@ const PatientDashboard = () => {
     );
   };
 
+  const handleRateDoctor = (doctorId) => {
+    setSelectedDoctorForRating(doctorId);
+    setRatingModalOpen(true);
+  };
+  
+  //previous impl 0
+  /*const submitRating = async () => {
+    if (!userRating || userRating < 1 || userRating > 5) {
+      alert('Please provide a valid rating between 1 and 5.');
+      return;
+    }
+
+    try {
+      await axios.post(
+        `/api/doctors/${selectedDoctorForRating}/rate`,
+        { doctorId: selectedDoctorForRating, rating: userRating },
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'), // Assuming JWT for auth
+          },
+        }
+      );
+      alert('Rating submitted successfully!');
+      setRatingModalOpen(false);
+      setUserRating(0);
+      // Refresh ratings after submission
+      const response = await axios.get(`/api/doctors/${selectedDoctorForRating}/rating`);
+      setDoctorRatings((prev) => ({
+        ...prev,
+        [selectedDoctorForRating]: response.data,
+      }));
+    } catch (err) {
+      console.error('Error submitting rating:', err);
+      alert('Failed to submit rating');
+    }
+  };*/
+
+  // previous impl 1
+  /*const submitRating = async () => {
+    if (!userRating || userRating < 1 || userRating > 5) {
+      alert('Please provide a valid rating between 1 and 5.');
+      return;
+    }
+  
+    try {
+      // Submit the rating
+      const response = await axios.post(
+        `/api/doctors/${selectedDoctorForRating}/rate`,
+        { rating: userRating },
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
+        }
+      );
+  
+      alert(response.data.msg);
+  
+      // Fetch updated ratings for the specific doctor
+      const updatedRatings = await axios.get(
+        `/api/doctors/${selectedDoctorForRating}/rating`
+      );
+      setDoctorRatings((prev) => ({
+        ...prev,
+        [selectedDoctorForRating]: updatedRatings.data,
+      }));
+  
+      setRatingModalOpen(false);
+      setUserRating(0);
+    } catch (err) {
+      console.error('Error submitting rating:', err);
+      alert('Failed to submit rating');
+    }
+  };*/
+  
+  const submitRating = async () => {
+    if (!userRating || userRating < 1 || userRating > 5) {
+      alert('Please provide a valid rating between 1 and 5.');
+      return;
+    }
+  
+    try {
+      // Submit the rating
+      const response = await axios.post(
+        `/api/doctors/${selectedDoctorForRating}/rate`,
+        { rating: userRating },
+        {
+          headers: {
+            Authorization: localStorage.getItem('token'),
+          },
+        }
+      );
+  
+      alert(response.data.msg);
+  
+      // Fetch updated ratings for the specific doctor
+      const updatedRatings = await axios.get(
+        `/api/doctors/${selectedDoctorForRating}/rating`
+      );
+      setDoctorRatings((prev) => ({
+        ...prev,
+        [selectedDoctorForRating]: updatedRatings.data,
+      }));
+  
+      setRatingModalOpen(false);
+      setUserRating(0);
+    } catch (err) {
+      console.error('Error submitting rating:', err);
+      alert('Failed to submit rating');
+    }
+  };  
+
   const onLogout = () => {
     dispatch(logout());
   };
@@ -90,14 +227,14 @@ const PatientDashboard = () => {
           Logout
         </button>
 
-        {/* Button to show patient information modal */}
-        <button className="patient-info-button" onClick={togglePatientInfoModal}>
+         {/* Button to show patient information modal */}
+         <button className="patient-info-button" onClick={togglePatientInfoModal}>
           Show Your Information
         </button>
       </aside>
 
       <main className="dashboard-content">
-        {/* Doctors Information Toggle */}
+        {/* Doctors Information */}
         <div>
           <button
             onClick={() => setShowDoctorsInfo((prevState) => !prevState)}
@@ -117,6 +254,14 @@ const PatientDashboard = () => {
                   <h2>{doctor.name}</h2>
                   <p><strong>Specialization:</strong> {doctor.specialization}</p>
                   <p><strong>Description:</strong> {doctor.description || 'No description available'}</p>
+                  <p>
+                    <strong>Average Rating:</strong>{' '}
+                    {doctorRatings[doctor._id]?.averageRating?.toFixed(1) || 'N/A'} (
+                    {doctorRatings[doctor._id]?.totalRatings || 0} reviews)
+                  </p>
+                  <button onClick={() => handleRateDoctor(doctor._id)}>
+                    Rate Doctor
+                  </button>
                 </div>
               ))
             ) : (
@@ -125,8 +270,8 @@ const PatientDashboard = () => {
           </div>
         </div>
 
-        {/* Doctor and Date Selection */}
-        <div className="selection-container">
+         {/* Doctor and Date Selection */}
+         <div className="selection-container">
           <label htmlFor="doctorSelect">Select Doctor:</label>
           <select id="doctorSelect" value={selectedDoctor} onChange={handleDoctorChange}>
             <option value="">-- Select Doctor --</option>
@@ -202,8 +347,8 @@ const PatientDashboard = () => {
         {/* View Appointments */}
         <ViewAppointments appointments={appointments} />
 
-        {/* View Medical Records */}
-        <div>
+         {/* View Medical Records */}
+         <div>
           <h3>Your Medical Record</h3>
           {records.length > 0 ? (
             <ul className="medical-records-list">
@@ -220,7 +365,7 @@ const PatientDashboard = () => {
         </div>
       </main>
 
-      {/* Patient Info Modal */}
+       {/* Patient Info Modal */}
       {showPatientInfoModal && (
         <div className="patient-info-modal">
           <div className="modal-content">
@@ -237,7 +382,25 @@ const PatientDashboard = () => {
           </div>
         </div>
       )}
-    </div>
+
+        {/* Rating Modal */}
+        {ratingModalOpen && (
+        <div className="rating-modal">
+          <div className="modal-content">
+          <h3>Rate the Doctor</h3>
+          <input 
+              type="number" 
+              min="1"
+              max="5"
+              value={userRating}
+              onChange={(e) => setUserRating(Number(e.target.value))}
+          />
+          <button onClick={submitRating}>Submit Rating</button>
+          <button onClick={() => setRatingModalOpen(false)}>Close</button>
+          </div>
+        </div>
+        )}
+      </div>
   );
 };
 
