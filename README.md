@@ -60,6 +60,14 @@ The React application can be accessed directly using the specified port number b
 ### **Video Demo-**
 https://drive.google.com/file/d/19QGukKLnDlzEeimom0ueYbVVvH9HHeCn/view?usp=sharing
 
+---
+
+Assumptions made for the project -
+
+1. Patient can reschedule appointment by cancelling and booking a new appointment.
+2. Doctor can see and cancel the appointments, but he is assumed to be available for the working hours. So only if an appointment is already booked for the timeslot it is blocked.
+3. Only for the latest appointment for a Patient, a Doctor can Add/Update the Medical Record, and only the updated Record from that Doctor is shown for the Patient.
+
 
 
 
