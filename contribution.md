@@ -1,6 +1,7 @@
 Contributions from Individual team members:
 
 Features:
+
 1) Register and Login:
 Contributors: Vishnu Prasath Muthukumarasamy,
 Srikrushna Pinaki Budi,
@@ -20,7 +21,7 @@ Apoorva Gerasa Shankarappa Gowda
 5) Doctor Ratings and reviews:
 Contributors: Vishnu Prasath Muthukumarasamy
 
-6) Complete UI/UX:
+6) UI/UX:
 Contributors: Priyanka Bengaluru Anil
 
 7) Documentation:
@@ -31,3 +32,6 @@ Amuktha Badimala
 Contributors: Vishnu Prasath Muthukumarasamy,
 Srikrushna Pinaki Budi,
 Apoorva Gerasa Shankarappa Gowda
+
+9) Logged in User Information:
+Contributors: Srikrushna Pinaki Budi
