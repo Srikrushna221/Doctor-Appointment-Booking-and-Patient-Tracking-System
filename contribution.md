@@ -33,5 +33,5 @@ Contributors: Vishnu Prasath Muthukumarasamy,
 Srikrushna Pinaki Budi,
 Apoorva Gerasa Shankarappa Gowda
 
-9) Logged in User Information:
+9) View Logged in User Information:
 Contributors: Srikrushna Pinaki Budi
