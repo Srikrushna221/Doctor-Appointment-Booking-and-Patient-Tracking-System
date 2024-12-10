@@ -2,24 +2,28 @@
 
 /* Header container and title */
 .header-container {
-  background-color: #4CAF50; /* Primary color */
+  background-color: #b3e0ff; /* Primary color */
   padding: 20px 20px;
   display: flex;
   flex-direction: column; /* Stack elements vertically */
   align-items: center;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  color: white;
+  color: black;
   border-radius: 15px; /* Rounded corners for the header */
-  margin-top: 20px; /* Gap from the top of the screen */
+  margin-top: 40px; /* Gap from the top of the screen */
+  margin-bottom: 30px;
+  margin-left: 25px;
+  margin-right: 250px;
   max-width: 100%; /* Ensure it doesn't exceed screen width */
   width: 93%; /* Full width */
+  font-family: 'Poppins';
 }
 
 .header-title {
   font-size: 32px;
   font-weight: bold;
   margin: 0;
-  color: white;
+  color: black;
   text-align: center;
 }
 

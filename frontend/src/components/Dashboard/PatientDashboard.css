@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
 .patient-dashboard {
     display: grid;
     grid-template-columns: 1fr 4fr;
@@ -8,17 +10,18 @@
   }
 
   .dashboard-header {
-  background-color: #007bff;
-  color: white;
-  padding: 30px;
-  border-radius: 12px;
-  text-align: center;
-  display: flex;
-  flex-direction: column; /* Ensures that content stacks vertically */
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
+    background-color: #007bff; /* Blue color */
+    color: white;
+    padding: 30px;
+    border-radius: 20px 20px 0 0; /* Rounded top corners only */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Add shadow for depth */
+    font-family: 'Poppins';
+  }
 
   .dashboard-content {
     overflow-y: auto;
@@ -118,12 +121,15 @@
     border-radius: 6px;
     background-color: #f9f9f9;
     transition: border-color 0.3s;
+    font-family: 'Poppins';
   }
 
   input[type="date"]:focus,
   select:focus {
     border-color: #007bff;
     outline: none;
+    font-family: 'Poppins';
+  
   }
 
   .time-slots-list {
@@ -228,3 +234,97 @@
     font-weight: bold;
     cursor: pointer;
   }
+  .rate-doctor-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rate-doctor-button:hover {
+    background-color: #3e8e41;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  .rating-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .star-rating {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+  
+  .star {
+    font-size: 30px;
+    color: #ddd;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .star.filled {
+    color: #ffc107;
+  }
+  
+  .submit-rating-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .submit-rating-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .close-rating-button {
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .close-rating-button:hover {
+    background-color: #d32f2f;
+  }
+  

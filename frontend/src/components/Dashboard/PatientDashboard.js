@@ -259,7 +259,7 @@ const PatientDashboard = () => {
                     {doctorRatings[doctor._id]?.averageRating?.toFixed(1) || 'N/A'} (
                     {doctorRatings[doctor._id]?.totalRatings || 0} reviews)
                   </p>
-                  <button onClick={() => handleRateDoctor(doctor._id)}>
+                  <button onClick={() => handleRateDoctor(doctor._id)} className="rate-doctor-button">
                     Rate Doctor
                   </button>
                 </div>
@@ -387,19 +387,30 @@ const PatientDashboard = () => {
         {ratingModalOpen && (
         <div className="rating-modal">
           <div className="modal-content">
-          <h3>Rate the Doctor</h3>
-          <input 
-              type="number" 
-              min="1"
-              max="5"
-              value={userRating}
-              onChange={(e) => setUserRating(Number(e.target.value))}
-          />
-          <button onClick={submitRating}>Submit Rating</button>
-          <button onClick={() => setRatingModalOpen(false)}>Close</button>
+            <span className="close" onClick={() => setRatingModalOpen(false)}>
+              &times;
+            </span>
+            <h3>Rate the Doctor</h3>
+            <div className="star-rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  className={`star ${userRating >= star ? 'filled' : ''}`}
+                  onClick={() => setUserRating(star)}
+                >
+                  &#9733;
+                </span>
+              ))}
+            </div>
+            <button onClick={submitRating} className="submit-rating-button">
+              Submit Rating
+            </button>
+            <button onClick={() => setRatingModalOpen(false)} className="close-rating-button">
+              Close
+            </button>
           </div>
         </div>
-        )}
+      )}
       </div>
   );
 };

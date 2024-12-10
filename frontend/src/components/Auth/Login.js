@@ -46,9 +46,9 @@ const Login = () => {
           The easiest way to manage your healthcare.
         </p>
         <ul className="login-features">
-          <li>✅ View easy-to-read patient statements</li>
-          <li>✅ Meet your Doctor and book an appointment</li>
-          <li>✅ Review your health information</li>
+          <li> View easy-to-read patient statements</li>
+          <li> Meet your Doctor and book an appointment</li>
+          <li> Review your health information</li>
         </ul>
         {message && (
           <div className={`login-message ${messageType}`}>
@@ -88,8 +88,8 @@ const Login = () => {
           </div>
         )}
         <div className="login-footer">
-          <Link to="/register" className="provider-sign-in">
-            New? Sign In Here
+          <Link to="/register" className="new-user-sign-in">
+            New? Sign Up Here
           </Link>
         </div>
       </div>
